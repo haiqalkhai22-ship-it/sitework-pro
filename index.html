@@ -17,7 +17,7 @@ header{background:var(--navy);color:white;padding:18px 16px 14px;position:sticky
 main{max-width:820px;margin:auto;padding:14px 12px 90px}.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:12px 0}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:11px;box-shadow:0 1px 3px #142b3a08}
 .stat{font-size:26px;font-weight:800}.muted{font-size:12px;color:var(--muted)}h2{font-size:17px;margin:0 0 12px}h3{font-size:14px;margin:0 0 8px}
-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);z-index:8;padding:6px 3px max(6px,env(safe-area-inset-bottom))}
+nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(6,1fr);z-index:8;padding:6px 3px max(6px,env(safe-area-inset-bottom))}
 nav button{border:0;background:none;color:var(--muted);font-size:11px;padding:7px 1px;border-radius:9px}nav button.active{background:#e7f1f5;color:var(--blue);font-weight:800}nav span{display:block;font-size:19px;margin-bottom:2px}
 label{display:block;font-size:12px;color:var(--muted);margin:9px 0 4px}
 input,select,textarea{width:100%;padding:11px;border:1px solid var(--line);border-radius:9px;background:white;color:var(--ink);font:inherit;min-width:0}
@@ -30,7 +30,7 @@ button.danger{background:#fff0ef;color:var(--bad);border:1px solid #f0ceca;borde
 .bar{height:8px;background:#e9eef1;border-radius:20px;overflow:hidden;margin-top:6px}.bar>i{display:block;height:100%;background:var(--blue)}
 .result{background:#eaf3f6;border-radius:10px;padding:13px;margin-top:12px}.result strong{font-size:23px}
 .hidden{display:none!important}.split{display:flex;align-items:center;justify-content:space-between;gap:8px}.hint{font-size:11px;color:var(--muted);line-height:1.45}
-@media(min-width:650px){main{padding-top:20px}.cards{grid-template-columns:repeat(4,1fr)}nav{position:sticky;top:68px;bottom:auto;max-width:820px;margin:auto;border:0;background:transparent;padding:8px 12px;grid-template-columns:repeat(5,1fr)}nav button{background:white;border:1px solid var(--line)}}
+@media(min-width:650px){main{padding-top:20px}.cards{grid-template-columns:repeat(4,1fr)}nav{position:sticky;top:68px;bottom:auto;max-width:820px;margin:auto;border:0;background:transparent;padding:8px 12px;grid-template-columns:repeat(6,1fr)}nav button{background:white;border:1px solid var(--line)}}
 @media print{header,nav,.noprint,button{display:none!important}body{background:white}main{padding:0}.card{box-shadow:none;break-inside:avoid}.tab{display:none!important}#report.tab{display:block!important}}
 </style>
 </head>
@@ -54,7 +54,7 @@ button.danger{background:#fff0ef;color:var(--bad);border:1px solid #f0ceca;borde
  </div>
  <div class="card"><h2>Quick actions</h2><div class="row">
   <button class="light" data-go="calculator">🧮 Material calculator</button><button class="light" data-go="progress">📈 Add daily progress</button>
-  <button class="light" data-go="materials">📦 Update material</button><button class="light" data-go="report">📄 Generate report</button>
+  <button class="light" data-go="materials">📦 Update material</button><button class="light" data-go="workers">👷 Daily workers</button><button class="light" data-go="report">📄 Generate report</button>
  </div></div>
 </section>
 
@@ -89,6 +89,18 @@ button.danger{background:#fff0ef;color:var(--bad);border:1px solid #f0ceca;borde
  <div class="card"><div class="split"><h2>Progress history</h2><span class="muted" id="progressCount">0 records</span></div><div id="progressList" class="muted">No records yet.</div></div>
 </section>
 
+<section id="workers" class="tab">
+ <div class="card"><h2>Daily workers record</h2>
+  <div class="row"><div><label>Date</label><input id="wdate" type="date"></div><div><label>Total workers</label><input id="wcount" type="number" min="0" step="1" placeholder="e.g. 12"></div></div>
+  <div class="row"><div><label>Working hours (per worker)</label><input id="whours" type="number" min="0" max="24" step="0.5" placeholder="e.g. 8"></div><div><label>Man-hours (auto)</label><input id="wmanhours" type="text" readonly value="0"></div></div>
+  <label>Activities / manpower breakdown</label><textarea id="wactivity" placeholder="e.g. 4 workers – column formwork; 3 workers – rebar fixing; 5 workers – housekeeping"></textarea>
+  <label>Workers photo (optional)</label><input id="wphoto" type="file" accept="image/*" capture="environment">
+  <p class="hint">Record the activity and number of workers assigned. Man-hours = total workers × working hours per worker.</p>
+  <button class="action" id="addWorker">＋ Save daily workers record</button>
+ </div>
+ <div class="card"><div class="split"><h2>Daily workers history</h2><span class="muted" id="workerCount">0 records</span></div><div id="workerList" class="muted">No workers records yet.</div></div>
+</section>
+
 <section id="materials" class="tab">
  <div class="card"><h2>Material stock tracking</h2>
   <label>Material name</label><input id="mname" placeholder="e.g. Y12 rebar / Grade 30 concrete">
@@ -120,13 +132,14 @@ button.danger{background:#fff0ef;color:var(--bad);border:1px solid #f0ceca;borde
  <button data-tab="calculator"><span>▦</span>Calculator</button>
  <button data-tab="progress"><span>↗</span>Progress</button>
  <button data-tab="materials"><span>▤</span>Materials</button>
+ <button data-tab="workers"><span>👷</span>Workers</button>
  <button data-tab="report"><span>▧</span>Reports</button>
 </nav>
 <script>
 (()=>{
 'use strict';
 const $=id=>document.getElementById(id),KEY='sitework_pro_personal_v1';
-let data={project:'',location:'',supervisor:'',progress:[],materials:[]};
+let data={project:'',location:'',supervisor:'',progress:[],materials:[],workers:[]};
 try{const saved=JSON.parse(localStorage.getItem(KEY)||'null');if(saved)data={...data,...saved}}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){alert('Storage full. Export a backup and remove some photos/records.')}};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -158,6 +171,16 @@ $('calculate').onclick=()=>{
  $('calcResult').textContent=n.toLocaleString('en-MY',{maximumFractionDigits:3})+' '+u;$('calcNote').textContent=note;
 };
 $('pdate').value=new Date().toLocaleDateString('en-CA');
+$('wdate').value=new Date().toLocaleDateString('en-CA');
+function updateManhours(){ $('wmanhours').value=((Number($('wcount').value)||0)*(Number($('whours').value)||0)).toFixed(1); }
+$('wcount').oninput=updateManhours;$('whours').oninput=updateManhours;
+$('addWorker').onclick=async()=>{
+ const date=$('wdate').value,count=Number($('wcount').value),hours=Number($('whours').value),activity=$('wactivity').value.trim();
+ if(!date||!Number.isInteger(count)||count<0||!Number.isFinite(hours)||hours<=0||hours>24||!activity)return alert('Enter date, worker count, working hours and activities.');
+ let photo='';const file=$('wphoto').files[0];if(file){if(file.size>850000)return alert('Please use a workers photo smaller than 850 KB.');photo=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)});}
+ data.workers.unshift({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),date,count,hours,manhours:count*hours,activity,photo});
+ $('wcount').value='';$('whours').value='';$('wmanhours').value='0';$('wactivity').value='';$('wphoto').value='';save();render();alert('Daily workers record saved.');
+};
 $('addProgress').onclick=async()=>{
  const work=$('pwork').value.trim(),plan=Number($('pplan').value),actual=Number($('pactual').value);
  if(!work||!$('pdate').value||plan<0||plan>100||actual<0||actual>100)return alert('Enter work details and valid percentages (0–100).');
@@ -176,25 +199,29 @@ $('addMaterial').onclick=()=>{
 function render(){
  $('dashProject').textContent=data.project||'My Construction Project';$('dashLocation').textContent=data.location||'Project overview';
  $('dashProgress').textContent=data.progress.length;$('dashMaterials').textContent=data.materials.length;
+ $('workerCount').textContent=(data.workers||[]).length+' records';
+ $('workerList').innerHTML=(data.workers||[]).length?data.workers.map(w=>`<div class="entry"><div class="split"><b>${esc(w.date)} · ${w.count} workers</b><button class="danger" data-del-w="${esc(w.id)}">Delete</button></div><div class="muted">${w.hours} hours/person · ${w.manhours} total man-hours</div><p>${esc(w.activity)}</p>${w.photo?`<img alt="Workers photo" src="${w.photo}" style="width:100%;max-height:240px;object-fit:cover;border-radius:9px;margin-top:8px">`:''}</div>`).join(''):'<p class="muted">No workers records yet.</p>';
  $('dashActual').textContent=data.progress.length?data.progress[0].actual+'%':'—';
  $('dashLow').textContent=data.materials.filter(m=>m.opening+m.received-m.used<0).length;
  $('progressCount').textContent=data.progress.length+' records';
  $('progressList').innerHTML=data.progress.length?data.progress.map(p=>`<div class="entry"><div class="split"><b>${esc(p.work)}</b><button class="danger" data-del-p="${esc(p.id)}">Delete</button></div><div class="muted">${esc(p.date)} · ${esc(p.cat)}</div><div class="split" style="margin-top:7px"><span>Planned ${p.plan}%</span><b>Actual ${p.actual}%</b></div><div class="bar"><i style="width:${p.actual}%"></i></div>${p.remarks?`<p class="muted">${esc(p.remarks)}</p>`:''}${p.photo?`<img alt="Site progress photo" src="${p.photo}" style="width:100%;max-height:220px;object-fit:cover;border-radius:9px;margin-top:8px">`:''}</div>`).join(''):'<p class="muted">No progress records yet.</p>';
  $('materialList').innerHTML=data.materials.length?data.materials.map(m=>{const bal=m.opening+m.received-m.used;return `<div class="entry"><div class="split"><b>${esc(m.name)}</b><button class="danger" data-del-m="${esc(m.name+'|'+m.unit)}">Delete</button></div><div class="muted">${esc(m.unit)} · Opening ${m.opening} · In ${m.received} · Out ${m.used}</div><b>Balance: ${bal.toLocaleString()} ${esc(m.unit)}</b>${bal<0?'<div class="muted" style="color:#b33b35">Negative stock — check entries</div>':''}</div>`}).join(''):'<p class="muted">No materials yet.</p>';
+ document.querySelectorAll('[data-del-w]').forEach(b=>b.onclick=()=>{if(confirm('Delete this daily workers record?')){data.workers=data.workers.filter(w=>w.id!==b.dataset.delW);save();render()}});
  document.querySelectorAll('[data-del-p]').forEach(b=>b.onclick=()=>{if(confirm('Delete this progress record?')){data.progress=data.progress.filter(p=>p.id!==b.dataset.delP);save();render()}});
  document.querySelectorAll('[data-del-m]').forEach(b=>b.onclick=()=>{if(confirm('Delete this material?')){const [n,u]=b.dataset.delM.split('|');data.materials=data.materials.filter(m=>!(m.name===n&&m.unit===u));save();render()}});
 }
 function buildReport(){
  const from=$('fromDate').value,to=$('toDate').value;
  const ps=data.progress.filter(p=>(!from||p.date>=from)&&(!to||p.date<=to));
- $('reportOutput').innerHTML=`<h2>${esc(data.project||'Construction Site Report')}</h2><p class="muted">${esc(data.location)} · Supervisor: ${esc(data.supervisor)}<br>Generated: ${new Date().toLocaleString()}</p><h3>Daily progress (${ps.length} records)</h3>${ps.length?ps.map(p=>`<div class="entry"><b>${esc(p.date)} · ${esc(p.work)}</b><div class="muted">${esc(p.cat)} · Planned ${p.plan}% · Actual ${p.actual}%</div>${esc(p.remarks)}</div>`).join(''):'<p class="muted">No progress records in selected period.</p>'}<h3 style="margin-top:18px">Material inventory</h3>${data.materials.length?data.materials.map(m=>`<div class="entry"><b>${esc(m.name)}</b><div class="muted">${esc(m.unit)} · Opening ${m.opening} · Received ${m.received} · Used ${m.used} · Balance ${m.opening+m.received-m.used}</div></div>`).join(''):'<p class="muted">No materials.</p>'}`;
+ const ws=(data.workers||[]).filter(w=>(!from||w.date>=from)&&(!to||w.date<=to));
+ $('reportOutput').innerHTML=`<h2>${esc(data.project||'Construction Site Report')}</h2><p class="muted">${esc(data.location)} · Supervisor: ${esc(data.supervisor)}<br>Generated: ${new Date().toLocaleString()}</p><h3>Daily progress (${ps.length} records)</h3>${ps.length?ps.map(p=>`<div class="entry"><b>${esc(p.date)} · ${esc(p.work)}</b><div class="muted">${esc(p.cat)} · Planned ${p.plan}% · Actual ${p.actual}%</div>${esc(p.remarks)}</div>`).join(''):'<p class="muted">No progress records in selected period.</p>'}<h3 style="margin-top:18px">Daily workers (${ws.length} records)</h3>${ws.length?ws.map(w=>`<div class="entry"><b>${esc(w.date)} · ${w.count} workers</b><div class="muted">${w.hours} hours/person · ${w.manhours} man-hours</div><p>${esc(w.activity)}</p>${w.photo?`<img alt="Workers photo" src="${w.photo}" style="width:100%;max-height:180px;object-fit:cover">`:''}</div>`).join(''):'<p class="muted">No workers records.</p>'}<h3 style="margin-top:18px">Material inventory</h3>${data.materials.length?data.materials.map(m=>`<div class="entry"><b>${esc(m.name)}</b><div class="muted">${esc(m.unit)} · Opening ${m.opening} · Received ${m.received} · Used ${m.used} · Balance ${m.opening+m.received-m.used}</div></div>`).join(''):'<p class="muted">No materials.</p>'}`;
 }
 $('makeReport').onclick=buildReport;$('fromDate').onchange=buildReport;$('toDate').onchange=buildReport;
 $('printPdf').onclick=()=>{buildReport();window.print()};
 $('backup').onclick=()=>download('sitework-pro-backup.json',JSON.stringify(data,null,2),'application/json');
 function download(name,content,type){const a=document.createElement('a'),url=URL.createObjectURL(new Blob([content],{type}));a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1500)}
-$('restore').onchange=async e=>{try{const d=JSON.parse(await e.target.files[0].text());if(!Array.isArray(d.progress)||!Array.isArray(d.materials))throw Error();data={...data,...d};save();['project','location','supervisor'].forEach(k=>$(k).value=data[k]||'');render();buildReport();alert('Backup restored.')}catch(err){alert('Invalid backup file.')}e.target.value=''};
-$('csv').onclick=()=>{const rows=[['Type','Date','Name','Category/Unit','Planned','Actual/Opening','Received','Used','Balance','Remarks']];data.progress.forEach(p=>rows.push(['Progress',p.date,p.work,p.cat,p.plan,p.actual,'','','',p.remarks]));data.materials.forEach(m=>rows.push(['Material','','',m.name+' ('+m.unit+')','',m.opening,m.received,m.used,m.opening+m.received-m.used,'']));download('sitework-pro-records.csv','\ufeff'+rows.map(r=>r.map(x=>'"'+String(x??'').replace(/"/g,'""')+'"').join(',')).join('\r\n'),'text/csv;charset=utf-8')};
+$('restore').onchange=async e=>{try{const d=JSON.parse(await e.target.files[0].text());if(!Array.isArray(d.progress)||!Array.isArray(d.materials))throw Error();d.workers=Array.isArray(d.workers)?d.workers:[];data={...data,...d};save();['project','location','supervisor'].forEach(k=>$(k).value=data[k]||'');render();buildReport();alert('Backup restored.')}catch(err){alert('Invalid backup file.')}e.target.value=''};
+$('csv').onclick=()=>{const rows=[['Type','Date','Name','Category/Unit','Planned','Actual/Opening','Received','Used','Balance','Remarks']];data.progress.forEach(p=>rows.push(['Progress',p.date,p.work,p.cat,p.plan,p.actual,'','','',p.remarks]));(data.workers||[]).forEach(w=>rows.push(['Workers',w.date,w.count+' workers',w.hours+' hours/person','',w.manhours,'','','',w.activity]));data.materials.forEach(m=>rows.push(['Material','','',m.name+' ('+m.unit+')','',m.opening,m.received,m.used,m.opening+m.received-m.used,'']));download('sitework-pro-records.csv','\ufeff'+rows.map(r=>r.map(x=>'"'+String(x??'').replace(/"/g,'""')+'"').join(',')).join('\r\n'),'text/csv;charset=utf-8')};
 if('serviceWorker'in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
 render();buildReport();
 })();
