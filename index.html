@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#172b3a">
+<meta name="description" content="Personal construction site manager for progress, materials, calculations and reports.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>SITEWORK PRO</title>
+<style>
+:root{--navy:#172b3a;--blue:#176b87;--bg:#f2f5f7;--card:#fff;--ink:#172b3a;--muted:#687985;--line:#dce4e9;--good:#147d55;--bad:#b33b35}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{background:var(--navy);color:white;padding:18px 16px 14px;position:sticky;top:0;z-index:5;box-shadow:0 2px 8px #0002}
+.brand{font-weight:850;letter-spacing:.7px;font-size:20px}.sub{font-size:12px;opacity:.75;margin-top:2px}
+main{max-width:820px;margin:auto;padding:14px 12px 90px}.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:12px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:11px;box-shadow:0 1px 3px #142b3a08}
+.stat{font-size:26px;font-weight:800}.muted{font-size:12px;color:var(--muted)}h2{font-size:17px;margin:0 0 12px}h3{font-size:14px;margin:0 0 8px}
+nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);z-index:8;padding:6px 3px max(6px,env(safe-area-inset-bottom))}
+nav button{border:0;background:none;color:var(--muted);font-size:11px;padding:7px 1px;border-radius:9px}nav button.active{background:#e7f1f5;color:var(--blue);font-weight:800}nav span{display:block;font-size:19px;margin-bottom:2px}
+label{display:block;font-size:12px;color:var(--muted);margin:9px 0 4px}
+input,select,textarea{width:100%;padding:11px;border:1px solid var(--line);border-radius:9px;background:white;color:var(--ink);font:inherit;min-width:0}
+textarea{min-height:68px;resize:vertical}.row{display:grid;grid-template-columns:1fr 1fr;gap:9px}.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+button.action{background:var(--blue);color:white;border:0;border-radius:9px;padding:11px 14px;font-weight:750;width:100%;margin-top:11px}
+button.light{background:#edf2f5;color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:9px 12px;font-weight:650}
+button.danger{background:#fff0ef;color:var(--bad);border:1px solid #f0ceca;border-radius:8px;padding:7px 9px}
+.tab{display:none}.tab.active{display:block}.entry{border-top:1px solid var(--line);padding:11px 0}.entry:first-child{border-top:0}
+.pill{display:inline-block;background:#e7f1f5;color:#175b73;border-radius:20px;padding:3px 8px;font-size:11px;font-weight:700}
+.bar{height:8px;background:#e9eef1;border-radius:20px;overflow:hidden;margin-top:6px}.bar>i{display:block;height:100%;background:var(--blue)}
+.result{background:#eaf3f6;border-radius:10px;padding:13px;margin-top:12px}.result strong{font-size:23px}
+.hidden{display:none!important}.split{display:flex;align-items:center;justify-content:space-between;gap:8px}.hint{font-size:11px;color:var(--muted);line-height:1.45}
+@media(min-width:650px){main{padding-top:20px}.cards{grid-template-columns:repeat(4,1fr)}nav{position:sticky;top:68px;bottom:auto;max-width:820px;margin:auto;border:0;background:transparent;padding:8px 12px;grid-template-columns:repeat(5,1fr)}nav button{background:white;border:1px solid var(--line)}}
+@media print{header,nav,.noprint,button{display:none!important}body{background:white}main{padding:0}.card{box-shadow:none;break-inside:avoid}.tab{display:none!important}#report.tab{display:block!important}}
+</style>
+</head>
+<body>
+<header><div class="brand">SITEWORK PRO</div><div class="sub">PERSONAL CONSTRUCTION SITE MANAGER</div></header>
+<main>
+<section id="dashboard" class="tab active">
+ <div class="card">
+  <div class="split"><div><h2 id="dashProject">My Construction Project</h2><div class="muted" id="dashLocation">Project overview</div></div><span class="pill">PERSONAL</span></div>
+  <div class="cards">
+   <div><div class="muted">Progress records</div><div class="stat" id="dashProgress">0</div></div>
+   <div><div class="muted">Material items</div><div class="stat" id="dashMaterials">0</div></div>
+   <div><div class="muted">Latest actual progress</div><div class="stat" id="dashActual">—</div></div>
+   <div><div class="muted">Low / negative stock</div><div class="stat" id="dashLow">0</div></div>
+  </div>
+ </div>
+ <div class="card"><h2>Project details</h2>
+  <label>Project name</label><input id="project" placeholder="e.g. 2-storey office building">
+  <div class="row"><div><label>Location</label><input id="location" placeholder="Project location"></div><div><label>Supervisor</label><input id="supervisor" placeholder="Your name"></div></div>
+  <button class="action" id="saveProject">Save project details</button>
+ </div>
+ <div class="card"><h2>Quick actions</h2><div class="row">
+  <button class="light" data-go="calculator">🧮 Material calculator</button><button class="light" data-go="progress">📈 Add daily progress</button>
+  <button class="light" data-go="materials">📦 Update material</button><button class="light" data-go="report">📄 Generate report</button>
+ </div></div>
+</section>
+
+<section id="calculator" class="tab">
+ <div class="card"><h2>Material calculator</h2>
+  <label>Calculation type</label><select id="calcType">
+   <option value="concrete">Concrete volume (m³)</option><option value="rebar">Rebar weight (kg)</option><option value="formwork">Formwork area (m²)</option><option value="block">Concrete block quantity (pcs)</option><option value="plaster">Plaster volume (m³)</option><option value="excavation">Excavation volume (m³)</option>
+  </select>
+  <div id="calcFields" class="row"></div>
+  <div class="result"><div class="muted">ESTIMATED RESULT</div><strong id="calcResult">0.000</strong><div class="muted" id="calcNote">Enter dimensions then calculate.</div></div>
+  <button class="action" id="calculate">Calculate</button>
+  <p class="hint">Check results against approved drawings and specifications. Allow separately for laps, cover, openings, compaction, wastage and site conditions.</p>
+ </div>
+ <div class="card"><h3>Formula reference</h3>
+  <div class="entry"><b>Concrete / excavation</b><div class="muted">Length × Width × Depth</div></div>
+  <div class="entry"><b>Rebar theoretical weight</b><div class="muted">Diameter² ÷ 162 × length × quantity</div></div>
+  <div class="entry"><b>Formwork</b><div class="muted">Length × height × number of faces</div></div>
+  <div class="entry"><b>Blocks</b><div class="muted">Wall area ÷ block face area × (1 + wastage %)</div></div>
+  <div class="entry"><b>Plaster</b><div class="muted">Wall area × thickness × number of faces</div></div>
+ </div>
+</section>
+
+<section id="progress" class="tab">
+ <div class="card"><h2>Daily progress entry</h2>
+  <div class="row"><div><label>Date</label><input id="pdate" type="date"></div><div><label>Category</label><select id="pcat"><option>Structure</option><option>C&S</option><option>Architecture</option><option>IBS / Precast</option><option>Infrastructure</option><option>M&E</option><option>Others</option></select></div></div>
+  <label>Work description</label><input id="pwork" placeholder="e.g. Level 1 column formwork">
+  <div class="row"><div><label>Planned (%)</label><input id="pplan" type="number" min="0" max="100" value="0"></div><div><label>Actual (%)</label><input id="pactual" type="number" min="0" max="100" value="0"></div></div>
+  <label>Manpower / remarks / issues</label><textarea id="premarks" placeholder="Workers, weather, delay, inspection remarks..."></textarea>
+  <label>Site photo (optional)</label><input id="pphoto" type="file" accept="image/*" capture="environment">
+  <button class="action" id="addProgress">＋ Save progress record</button>
+ </div>
+ <div class="card"><div class="split"><h2>Progress history</h2><span class="muted" id="progressCount">0 records</span></div><div id="progressList" class="muted">No records yet.</div></div>
+</section>
+
+<section id="materials" class="tab">
+ <div class="card"><h2>Material stock tracking</h2>
+  <label>Material name</label><input id="mname" placeholder="e.g. Y12 rebar / Grade 30 concrete">
+  <div class="row"><div><label>Unit</label><input id="munit" placeholder="kg / pcs / m³"></div><div><label>Opening stock</label><input id="mopening" type="number" min="0" value="0"></div></div>
+  <div class="row"><div><label>Received / stock in</label><input id="mreceived" type="number" min="0" value="0"></div><div><label>Used / stock out</label><input id="mused" type="number" min="0" value="0"></div></div>
+  <button class="action" id="addMaterial">＋ Add / update material</button>
+  <p class="hint">Balance = opening stock + received − used. Re-enter the same material and unit to add another stock movement.</p>
+ </div>
+ <div class="card"><h2>Inventory</h2><div id="materialList" class="muted">No materials yet.</div></div>
+</section>
+
+<section id="report" class="tab">
+ <div class="card"><h2>Project report</h2><p class="muted">Print or save this report as PDF from your phone's print menu.</p>
+  <div class="row"><div><label>From date</label><input id="fromDate" type="date"></div><div><label>To date</label><input id="toDate" type="date"></div></div>
+  <button class="action noprint" id="makeReport">Prepare report</button>
+  <button class="light noprint" style="width:100%;margin-top:8px" id="printPdf">⬇ Export / Save PDF</button>
+  <div id="reportOutput" style="margin-top:16px"></div>
+ </div>
+ <div class="card noprint"><h2>Backup & restore</h2>
+  <button class="light" style="width:100%" id="backup">Download full JSON backup</button>
+  <label>Restore from JSON backup</label><input type="file" id="restore" accept=".json,application/json">
+  <button class="light" style="width:100%;margin-top:9px" id="csv">Export records as CSV</button>
+  <p class="hint">Your records are stored locally on this device/browser. Download a backup regularly. Clearing browser data can erase records.</p>
+ </div>
+</section>
+</main>
+<nav class="noprint">
+ <button class="active" data-tab="dashboard"><span>⌂</span>Home</button>
+ <button data-tab="calculator"><span>▦</span>Calculator</button>
+ <button data-tab="progress"><span>↗</span>Progress</button>
+ <button data-tab="materials"><span>▤</span>Materials</button>
+ <button data-tab="report"><span>▧</span>Reports</button>
+</nav>
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id),KEY='sitework_pro_personal_v1';
+let data={project:'',location:'',supervisor:'',progress:[],materials:[]};
+try{const saved=JSON.parse(localStorage.getItem(KEY)||'null');if(saved)data={...data,...saved}}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){alert('Storage full. Export a backup and remove some photos/records.')}};
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function go(tab){document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.id===tab));document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.tab===tab));if(tab==='report')buildReport();render();window.scrollTo(0,0)}
+document.querySelectorAll('nav [data-tab]').forEach(b=>b.onclick=()=>go(b.dataset.tab));
+document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
+['project','location','supervisor'].forEach(k=>$(k).value=data[k]||'');
+$('saveProject').onclick=()=>{['project','location','supervisor'].forEach(k=>data[k]=$(k).value.trim());save();render();alert('Project details saved.')};
+const specs={
+ concrete:[['Length (m)','l'],['Width (m)','w'],['Depth (m)','d']],
+ rebar:[['Diameter (mm)','dia'],['Length (m)','len'],['Quantity (pcs)','qty']],
+ formwork:[['Length (m)','l'],['Height (m)','h'],['Faces','faces']],
+ block:[['Wall length (m)','l'],['Wall height (m)','h'],['Block length (mm)','bl'],['Block height (mm)','bh'],['Wastage (%)','waste']],
+ plaster:[['Wall length (m)','l'],['Wall height (m)','h'],['Thickness (mm)','thick'],['Faces','faces']],
+ excavation:[['Length (m)','l'],['Width (m)','w'],['Depth (m)','d']]
+};
+function drawCalc(){const s=specs[$('calcType').value];$('calcFields').innerHTML=s.map(([label,key])=>`<div><label>${label}</label><input type="number" min="0" step="any" data-f="${key}" value="${['faces','qty'].includes(key)?1:0}"></div>`).join('')}
+$('calcType').onchange=drawCalc;drawCalc();
+$('calculate').onclick=()=>{
+ const v={};document.querySelectorAll('[data-f]').forEach(x=>v[x.dataset.f]=Number(x.value)||0);
+ let n=0,u='',note='';
+ switch($('calcType').value){
+ case'concrete':case'excavation':n=v.l*v.w*v.d;u='m³';note='Geometric volume before allowances';break;
+ case'rebar':n=(v.dia*v.dia/162)*v.len*v.qty;u='kg';note='Theoretical rebar weight; verify bar schedule';break;
+ case'formwork':n=v.l*v.h*v.faces;u='m²';note='Estimated contact area';break;
+ case'block':n=v.l*v.h/((v.bl/1000)*(v.bh/1000))*(1+v.waste/100);u='pcs';note='Rounded up to whole blocks';n=Math.ceil(n);break;
+ case'plaster':n=v.l*v.h*(v.thick/1000)*v.faces;u='m³';note='Estimated plaster volume';break;
+ }
+ $('calcResult').textContent=n.toLocaleString('en-MY',{maximumFractionDigits:3})+' '+u;$('calcNote').textContent=note;
+};
+$('pdate').value=new Date().toLocaleDateString('en-CA');
+$('addProgress').onclick=async()=>{
+ const work=$('pwork').value.trim(),plan=Number($('pplan').value),actual=Number($('pactual').value);
+ if(!work||!$('pdate').value||plan<0||plan>100||actual<0||actual>100)return alert('Enter work details and valid percentages (0–100).');
+ let photo='';const file=$('pphoto').files[0];
+ if(file){if(file.size>850000)return alert('Please use a photo smaller than 850 KB to protect device storage.');photo=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)})}
+ data.progress.unshift({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),date:$('pdate').value,cat:$('pcat').value,work,plan,actual,remarks:$('premarks').value,photo});
+ $('pwork').value='';$('premarks').value='';$('pphoto').value='';save();render();alert('Progress record saved.');
+};
+$('addMaterial').onclick=()=>{
+ const name=$('mname').value.trim(),unit=$('munit').value.trim(),opening=Number($('mopening').value),received=Number($('mreceived').value),used=Number($('mused').value);
+ if(!name||!unit||[opening,received,used].some(x=>!Number.isFinite(x)||x<0))return alert('Enter a material name, unit and valid quantities.');
+ const old=data.materials.find(m=>m.name.toLowerCase()===name.toLowerCase()&&m.unit.toLowerCase()===unit.toLowerCase());
+ if(old){old.opening+=opening;old.received+=received;old.used+=used}else data.materials.push({name,unit,opening,received,used});
+ ['mname','munit'].forEach(k=>$(k).value='');['mopening','mreceived','mused'].forEach(k=>$(k).value=0);save();render();
+};
+function render(){
+ $('dashProject').textContent=data.project||'My Construction Project';$('dashLocation').textContent=data.location||'Project overview';
+ $('dashProgress').textContent=data.progress.length;$('dashMaterials').textContent=data.materials.length;
+ $('dashActual').textContent=data.progress.length?data.progress[0].actual+'%':'—';
+ $('dashLow').textContent=data.materials.filter(m=>m.opening+m.received-m.used<0).length;
+ $('progressCount').textContent=data.progress.length+' records';
+ $('progressList').innerHTML=data.progress.length?data.progress.map(p=>`<div class="entry"><div class="split"><b>${esc(p.work)}</b><button class="danger" data-del-p="${esc(p.id)}">Delete</button></div><div class="muted">${esc(p.date)} · ${esc(p.cat)}</div><div class="split" style="margin-top:7px"><span>Planned ${p.plan}%</span><b>Actual ${p.actual}%</b></div><div class="bar"><i style="width:${p.actual}%"></i></div>${p.remarks?`<p class="muted">${esc(p.remarks)}</p>`:''}${p.photo?`<img alt="Site progress photo" src="${p.photo}" style="width:100%;max-height:220px;object-fit:cover;border-radius:9px;margin-top:8px">`:''}</div>`).join(''):'<p class="muted">No progress records yet.</p>';
+ $('materialList').innerHTML=data.materials.length?data.materials.map(m=>{const bal=m.opening+m.received-m.used;return `<div class="entry"><div class="split"><b>${esc(m.name)}</b><button class="danger" data-del-m="${esc(m.name+'|'+m.unit)}">Delete</button></div><div class="muted">${esc(m.unit)} · Opening ${m.opening} · In ${m.received} · Out ${m.used}</div><b>Balance: ${bal.toLocaleString()} ${esc(m.unit)}</b>${bal<0?'<div class="muted" style="color:#b33b35">Negative stock — check entries</div>':''}</div>`}).join(''):'<p class="muted">No materials yet.</p>';
+ document.querySelectorAll('[data-del-p]').forEach(b=>b.onclick=()=>{if(confirm('Delete this progress record?')){data.progress=data.progress.filter(p=>p.id!==b.dataset.delP);save();render()}});
+ document.querySelectorAll('[data-del-m]').forEach(b=>b.onclick=()=>{if(confirm('Delete this material?')){const [n,u]=b.dataset.delM.split('|');data.materials=data.materials.filter(m=>!(m.name===n&&m.unit===u));save();render()}});
+}
+function buildReport(){
+ const from=$('fromDate').value,to=$('toDate').value;
+ const ps=data.progress.filter(p=>(!from||p.date>=from)&&(!to||p.date<=to));
+ $('reportOutput').innerHTML=`<h2>${esc(data.project||'Construction Site Report')}</h2><p class="muted">${esc(data.location)} · Supervisor: ${esc(data.supervisor)}<br>Generated: ${new Date().toLocaleString()}</p><h3>Daily progress (${ps.length} records)</h3>${ps.length?ps.map(p=>`<div class="entry"><b>${esc(p.date)} · ${esc(p.work)}</b><div class="muted">${esc(p.cat)} · Planned ${p.plan}% · Actual ${p.actual}%</div>${esc(p.remarks)}</div>`).join(''):'<p class="muted">No progress records in selected period.</p>'}<h3 style="margin-top:18px">Material inventory</h3>${data.materials.length?data.materials.map(m=>`<div class="entry"><b>${esc(m.name)}</b><div class="muted">${esc(m.unit)} · Opening ${m.opening} · Received ${m.received} · Used ${m.used} · Balance ${m.opening+m.received-m.used}</div></div>`).join(''):'<p class="muted">No materials.</p>'}`;
+}
+$('makeReport').onclick=buildReport;$('fromDate').onchange=buildReport;$('toDate').onchange=buildReport;
+$('printPdf').onclick=()=>{buildReport();window.print()};
+$('backup').onclick=()=>download('sitework-pro-backup.json',JSON.stringify(data,null,2),'application/json');
+function download(name,content,type){const a=document.createElement('a'),url=URL.createObjectURL(new Blob([content],{type}));a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1500)}
+$('restore').onchange=async e=>{try{const d=JSON.parse(await e.target.files[0].text());if(!Array.isArray(d.progress)||!Array.isArray(d.materials))throw Error();data={...data,...d};save();['project','location','supervisor'].forEach(k=>$(k).value=data[k]||'');render();buildReport();alert('Backup restored.')}catch(err){alert('Invalid backup file.')}e.target.value=''};
+$('csv').onclick=()=>{const rows=[['Type','Date','Name','Category/Unit','Planned','Actual/Opening','Received','Used','Balance','Remarks']];data.progress.forEach(p=>rows.push(['Progress',p.date,p.work,p.cat,p.plan,p.actual,'','','',p.remarks]));data.materials.forEach(m=>rows.push(['Material','','',m.name+' ('+m.unit+')','',m.opening,m.received,m.used,m.opening+m.received-m.used,'']));download('sitework-pro-records.csv','\ufeff'+rows.map(r=>r.map(x=>'"'+String(x??'').replace(/"/g,'""')+'"').join(',')).join('\r\n'),'text/csv;charset=utf-8')};
+if('serviceWorker'in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+render();buildReport();
+})();
+</script>
+</body></html>
